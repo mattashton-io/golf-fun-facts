@@ -93,7 +93,7 @@
 
         document.getElementById('get-fact-btn').addEventListener('click', function() {
             const factText = document.getElementById('fact-text');
-            factText.textContent = 'Loading...';
+            factText.textContent = 'Grabbing your fun fact! This could take a while ...';
 
             fetch('/get_fact')
                 .then(response => response.json())
