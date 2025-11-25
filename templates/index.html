@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf Fun Facts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold mb-8">Golf Fun Facts</h1>
+        <button id="get-fact-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Get New Fact
+        </button>
+        <div id="fact-container" class="mt-6 p-4 bg-white rounded-lg shadow-md max-w-md mx-auto min-h-[100px] flex items-center justify-center">
+            <p id="fact-text" class="text-lg">Click the button to get a fun fact about golf!</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('get-fact-btn').addEventListener('click', function() {
+            const factText = document.getElementById('fact-text');
+            const factContainer = document.getElementById('fact-container');
+            factText.textContent = 'Loading...';
+
+            fetch('/get_fact')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        factText.textContent = 'Error: ' + data.error;
+                    } else {
+                        factText.textContent = data.fact;
+                    }
+                })
+                .catch(error => {
+                    factText.textContent = 'Failed to fetch a fact. Please try again.';
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+</html>
