@@ -1,26 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light"> 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Golf Fun Facts</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Light mode variables */
+        .light {
+            --bg-color: #f0fdf4; /* lime-100 */
+            --text-color: #14532d; /* green-900 */
+            --btn-bg-color: #22c55e; /* green-500 */
+            --btn-hover-bg-color: #15803d; /* green-700 */
+            --btn-text-color: white;
+            --fact-bg-color: white;
+        }
+        /* Dark mode variables */
+        .dark {
+            --bg-color: #14532d; /* green-900 */
+            --text-color: #d9f99d; /* lime-200 */
+            --btn-bg-color: #84cc16; /* lime-500 */
+            --btn-hover-bg-color: #a3e635; /* lime-400 */
+            --btn-text-color: #14532d; /* green-900 */
+            --fact-bg-color: #166534; /* green-800 */
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        button#get-fact-btn {
+            background-color: var(--btn-bg-color);
+            color: var(--btn-text-color);
+        }
+        button#get-fact-btn:hover {
+            background-color: var(--btn-hover-bg-color);
+        }
+        #fact-container {
+            background-color: var(--fact-bg-color);
+            color: var(--text-color);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 h-screen flex items-center justify-center">
+<body class="h-screen flex items-center justify-center transition-colors duration-500">
+    <div class="absolute top-4 right-4">
+        <button id="theme-toggle" class="p-2 rounded-full focus:outline-none">
+            <svg id="theme-toggle-dark-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM10 18a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1zM5.05 14.464A1 1 0 106.465 13.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM1.005 10.995a1 1 0 011.414 0l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+        </button>
+    </div>
     <div class="text-center">
         <h1 class="text-4xl font-bold mb-8">Golf Fun Facts</h1>
-        <button id="get-fact-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button id="get-fact-btn" class="font-bold py-2 px-4 rounded transition-colors duration-500">
             Get New Fact
         </button>
-        <div id="fact-container" class="mt-6 p-4 bg-white rounded-lg shadow-md max-w-md mx-auto min-h-[100px] flex items-center justify-center">
+        <div id="fact-container" class="mt-6 p-4 rounded-lg shadow-md max-w-md mx-auto min-h-[100px] flex items-center justify-center transition-colors duration-500">
             <p id="fact-text" class="text-lg">Click the button to get a fun fact about golf!</p>
         </div>
     </div>
 
     <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const docElement = document.documentElement;
+
+        // Check for saved theme preference or use system preference
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            docElement.classList.add('dark');
+            docElement.classList.remove('light');
+            lightIcon.classList.remove('hidden');
+        } else {
+            docElement.classList.add('light');
+            docElement.classList.remove('dark');
+            darkIcon.classList.remove('hidden');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            if (docElement.classList.contains('dark')) {
+                docElement.classList.remove('dark');
+                docElement.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
+            } else {
+                docElement.classList.remove('light');
+                docElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                lightIcon.classList.remove('hidden');
+                darkIcon.classList.add('hidden');
+            }
+        });
+
         document.getElementById('get-fact-btn').addEventListener('click', function() {
             const factText = document.getElementById('fact-text');
-            const factContainer = document.getElementById('fact-container');
             factText.textContent = 'Loading...';
 
             fetch('/get_fact')

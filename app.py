@@ -28,7 +28,7 @@ def index():
 @app.route('/get_fact')
 def get_fact():
     try:
-        prompt = "Tell me a random fun fact about golf."
+        prompt = "Tell me a different fun fact about golf each time."
         response = model.generate_content(prompt)
         return jsonify({'fact': response.text})
     except Exception as e:
